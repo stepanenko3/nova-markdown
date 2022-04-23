@@ -25,6 +25,10 @@
         "vuex": "^4.0.2"
     },
     "dependencies": {
+        "codemirror": "^5.65.3",
+        "markdown-it": "^12.3.2",
+        "marked": "^4.0.14",
+        "simplemde": "^1.11.2",
         "vue": "^3.2.31"
     }
 }

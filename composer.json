@@ -1,5 +1,5 @@
 {
-    "name": "stepanenko3/nova-cards",
+    "name": "stepanenko3/nova-markdown",
     "description": "A Laravel Nova info cards.",
     "keywords": [
         "laravel",
@@ -8,22 +8,26 @@
     "license": "MIT",
     "require": {
         "php": ">=8.0",
-        "laravel/nova": "^4.0",
-        "stepanenko3/laravel-system-resources": "^1.0.0",
-        "spatie/ssl-certificate": "^1.12"
+        "laravel/nova": "^4.0"
     },
     "autoload": {
         "psr-4": {
-            "Stepanenko3\\NovaCards\\": "src/"
+            "Stepanenko3\\NovaMarkdown\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Stepanenko3\\NovaCards\\NovaCardsServiceProvider"
+                "Stepanenko3\\NovaMarkdown\\FieldServiceProvider"
             ]
         }
     },
+    "repositories": [
+      {
+        "type": "path",
+        "url": "../nova"
+      }
+    ],
     "config": {
         "sort-packages": true
     },
