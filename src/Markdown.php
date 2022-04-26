@@ -37,6 +37,39 @@ class Markdown extends Field implements FilterableField
     public $preset = 'default';
 
     /**
+     * Create a new element.
+     * @param  string|null  $component
+     */
+    public function __construct($component = null)
+    {
+        parent::__construct($component);
+
+        $this->withMeta([
+            'toolbar' => config('nova-markdown.toolbar'),
+            'statusbar' => config('nova-markdown.statusbar'),
+        ]);
+    }
+
+
+    public function toolbar($array)
+    {
+        $this->withMeta([
+            'toolbar' => $array,
+        ]);
+
+        return $this;
+    }
+
+    public function statusbar($array)
+    {
+        $this->withMeta([
+            'statusbar' => $array,
+        ]);
+
+        return $this;
+    }
+
+    /**
      * Define the preset the field should use. Can be "commonmark", "zero", and "default".
      *
      * @param  string|array<string, mixed>  $preset

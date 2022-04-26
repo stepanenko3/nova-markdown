@@ -19,7 +19,6 @@ class FieldServiceProvider extends ServiceProvider
         $this->publishResources();
         $this->serveAssets();
         $this->declareConfig();
-        $this->loadRoutes();
     }
 
     /**
@@ -47,7 +46,7 @@ class FieldServiceProvider extends ServiceProvider
     {
         Nova::serving(function (ServingNova $event) {
             Nova::script('markdown', __DIR__.'/../dist/js/entry.js');
-            // Nova::style('markdown', __DIR__.'/../dist/css/field.css');
+            // Nova::style('markdown', __DIR__.'/../dist/css/entry.css');
         });
     }
 
@@ -57,16 +56,5 @@ class FieldServiceProvider extends ServiceProvider
             __DIR__.'/../config/nova-markdown.php',
             'nova-markdown'
         );
-    }
-
-    private function loadRoutes()
-    {
-        if ($this->app->routesAreCached()) {
-            return;
-        }
-
-        Route::middleware(['nova'])
-                ->prefix('nova-vendor/stepanenko3')
-                ->group(__DIR__.'/../routes/api.php');
     }
 }

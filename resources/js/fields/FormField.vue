@@ -15,9 +15,8 @@
                 }"
             >
                 <header
-                    class="flex items-center overflow-x-auto pr-2 content-center justify-between border-b border-gray-200 dark:border-gray-700"
+                    class="flex items-center overflow-x-auto content-center justify-between border-b border-gray-200 dark:border-gray-700"
                     :class="{ 'bg-gray-100': currentlyIsReadonly }"
-                    :style="{ 'box-shadow': 'inset -7px 0 9px -7px rgba(0,0,0,.25)' }"
                 >
                     <div class="w-full flex items-center content-center">
                         <button
@@ -40,8 +39,8 @@
                         <button
                             :key="tool.action"
                             @click.prevent="callAction(tool.action)"
-                            v-for="tool in tools"
-                            class="rounded-none w-10 h-10 ico-button inline-flex items-center justify-center px-2 text-sm border-l border-gray-200 dark:border-gray-700"
+                            v-for="tool in headerTools"
+                            class="rounded-none w-10 h-10 flex-shrink-0 ico-button inline-flex items-center justify-center px-2 text-sm border-l border-gray-200 dark:border-gray-700"
                         >
                             <template v-if="tool.icon">
                                 <Icon v-if="tool.useHeroIcons" class="w-4 h-4" :type="tool.icon" />
@@ -53,14 +52,32 @@
                 </header>
 
                 <div
+                    v-if="!currentlyIsReadonly"
+                    class="flex items-center overflow-x-auto content-center border-b border-gray-200 dark:border-gray-700"
+                >
+                    <button
+                        :key="tool.action"
+                        @click.prevent="callAction(tool.action)"
+                        v-for="tool in tools"
+                        class="rounded-none w-10 h-10 flex-shrink-0 ico-button inline-flex items-center justify-center px-2 text-sm border-r border-gray-200 dark:border-gray-700"
+                    >
+                        <template v-if="tool.icon">
+                            <Icon v-if="tool.useHeroIcons" class="w-4 h-4" :type="tool.icon" />
+                            <component v-else class="w-4 h-4" :is="tool.icon" />
+                        </template>
+                        <p v-else class="text-bold" v-text="tool.text"></p>
+                    </button>
+                </div>
+
+                <div
                     v-show="mode == 'write'"
                     @click="focus"
                     class="dark:bg-gray-900 p-4"
                     :class="{ 'readonly bg-gray-100': currentlyIsReadonly }"
                 >
                     <textarea
-                    ref="theTextarea"
-                    :class="{ 'bg-gray-100': currentlyIsReadonly }"
+                        ref="theTextarea"
+                        :class="{ 'bg-gray-100': currentlyIsReadonly }"
                     />
                 </div>
 
@@ -69,6 +86,19 @@
                     class="markdown overflow-scroll p-4"
                     v-html="previewContent()"
                 />
+
+                <footer
+                    v-if="statuses?.length > 0"
+                    class="flex items-center overflow-x-auto content-center justify-end border-t border-gray-200 dark:border-gray-700"
+                >
+                    <div
+                        :key="status.name"
+                        v-for="status in statuses"
+                        class="rounded-none h-10 flex-shrink-0 ico-button inline-flex items-center justify-center px-2 text-sm border-r border-gray-200 dark:border-gray-700"
+                    >
+                        {{ statusData[status.name] }}
+                    </div>
+                </footer>
             </div>
         </template>
     </DefaultField>
@@ -98,6 +128,7 @@
         data: () => ({
             fullScreen: false,
             isFocused: false,
+            statusData: [],
             mode: 'write',
         }),
 
@@ -145,6 +176,11 @@
 
             if (this.field.value) {
                 this.doc().setValue(this.field.value)
+            }
+
+            if (this.statuses?.length > 0) {
+                this.statuses.forEach(v => v.updateValue())
+                this.codemirror.on('cursorActivity', () => this.statuses.forEach(v => v.updateValue()))
             }
 
             Nova.$on(this.fieldAttributeValueEventName, this.listenToValueChanges)
@@ -279,6 +315,18 @@
                     this.toggleHeading3(this.codemirror);
                 },
 
+                headingSmaller() {
+                    if (!this.isEditable) return
+
+                    this.toggleHeadingSmaller(this.codemirror);
+                },
+
+                headingBigger() {
+                    if (!this.isEditable) return
+
+                    this.toggleHeadingBigger(this.codemirror);
+                },
+
                 bold() {
                     if (!this.isEditable) return
 
@@ -359,86 +407,128 @@
                 },
             }),
 
-            tools: () => [
-                {
-                    name: 'h1',
-                    action: 'h1',
-                    text: 'h1',
-                },
-                {
-                    name: 'h2',
-                    action: 'h2',
-                    text: 'h2',
-                },
-                {
-                    name: 'h3',
-                    action: 'h3',
-                    text: 'h3',
-                },
-                {
-                    name: 'bold',
-                    action: 'bold',
-                    text: 'b',
-                },
-                {
-                    name: 'italicize',
-                    action: 'italicize',
-                    text: 'i',
-                },
-                {
-                    name: 'strikethrough',
-                    action: 'strikethrough',
-                    'text': 's',
-                },
-                {
-                    name: 'quote',
-                    action: 'quote',
-                    'text': 'q',
-                },
-                {
-                    name: 'unorderedList',
-                    action: 'unorderedList',
-                    'text': 'ul',
-                },
-                {
-                    name: 'orderedList',
-                    action: 'orderedList',
-                    'text': 'ol',
-                },
-                {
-                    name: 'link',
-                    action: 'link',
-                    icon: 'link',
-                    useHeroIcons: true,
-                },
-                {
-                    name: 'image',
-                    action: 'image',
-                    icon: 'photograph',
-                    useHeroIcons: true,
-                },
-                {
-                    name: 'table',
-                    action: 'table',
-                    text: 't',
-                },
-                // {
-                //     name: 'horizontalRule',
-                //     action: 'horizontalRule',
-                //     text: 'hr',
-                // },
-                {
-                    name: 'code',
-                    action: 'code',
-                    icon: 'code',
-                    useHeroIcons: true,
-                },
+            headerTools: () => [
                 {
                     name: 'fullScreen',
                     action: 'toggleFullScreen',
                     icon: 'icon-full-screen',
                 },
             ],
+
+            tools() {
+                return [
+                    {
+                        name: 'h1',
+                        action: 'h1',
+                        text: 'h1',
+                    },
+                    {
+                        name: 'h2',
+                        action: 'h2',
+                        text: 'h2',
+                    },
+                    {
+                        name: 'h3',
+                        action: 'h3',
+                        text: 'h3',
+                    },
+                    {
+                        name: 'headingBigger',
+                        action: 'headingBigger',
+                        text: 'H↑',
+                    },
+                    {
+                        name: 'headingSmaller',
+                        action: 'headingSmaller',
+                        text: 'H↓',
+                    },
+                    {
+                        name: 'bold',
+                        action: 'bold',
+                        text: 'b',
+                    },
+                    {
+                        name: 'italicize',
+                        action: 'italicize',
+                        text: 'i',
+                    },
+                    {
+                        name: 'strikethrough',
+                        action: 'strikethrough',
+                        'text': 's',
+                    },
+                    {
+                        name: 'quote',
+                        action: 'quote',
+                        'text': 'q',
+                    },
+                    {
+                        name: 'unorderedList',
+                        action: 'unorderedList',
+                        'text': 'ul',
+                    },
+                    {
+                        name: 'orderedList',
+                        action: 'orderedList',
+                        'text': 'ol',
+                    },
+                    {
+                        name: 'link',
+                        action: 'link',
+                        icon: 'link',
+                        useHeroIcons: true,
+                    },
+                    {
+                        name: 'image',
+                        action: 'image',
+                        icon: 'photograph',
+                        useHeroIcons: true,
+                    },
+                    {
+                        name: 'table',
+                        action: 'table',
+                        text: 't',
+                    },
+                    {
+                        name: 'horizontalRule',
+                        action: 'horizontalRule',
+                        text: 'hr',
+                    },
+                    {
+                        name: 'code',
+                        action: 'code',
+                        icon: 'code',
+                        useHeroIcons: true,
+                    },
+                ]
+                    .filter(tool => this.field.toolbar.indexOf(tool.name) !== -1);
+            },
+
+            statuses() {
+                return [
+                    {
+                        name: 'lines',
+                        updateValue: () => this.statusData.lines = this.__('lines: :value', {
+                            value: this.codemirror.lineCount(),
+                        }),
+                    },
+                    {
+                        name: 'words',
+                        updateValue: () => this.statusData.words = this.__('words: :value', {
+                            value: this.wordCount(this.rawContent() || ''),
+                        }),
+                    },
+                    {
+                        name: 'cursor',
+                        updateValue: () => {
+                            const cursor = this.codemirror.getCursor();
+
+                            this.statusData.cursor = `${cursor.line}:${cursor.ch}`;
+                        }
+                    },
+                ]
+                    .filter(status => this.field.statusbar.indexOf(status.name) !== -1);
+            },
 
             isFullScreen() {
                 return this.fullScreen == true

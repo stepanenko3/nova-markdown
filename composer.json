@@ -1,6 +1,6 @@
 {
     "name": "stepanenko3/nova-markdown",
-    "description": "A Laravel Nova info cards.",
+    "description": "Nova Markdown advanced field",
     "keywords": [
         "laravel",
         "nova"
