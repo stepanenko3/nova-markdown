@@ -15,22 +15,21 @@ class FieldServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes(
-            [
-                __DIR__.'/../config/nova-markdown.php' =>
-                    config_path('nova-markdown.php'),
-            ],
-            'config'
+        if ($this->app->runningInConsole()) {
+            // Publish config
+            $this->publishes([
+                __DIR__ . '/../config/' => config_path(),
+            ], 'config');
+        }
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/nova-markdown.php',
+            'nova-markdown'
         );
 
         Nova::serving(function (ServingNova $event) {
             Nova::script('nova-markdown', __DIR__.'/../dist/js/field.js');
         });
-
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/nova-markdown.php',
-            'nova-markdown'
-        );
     }
 
     /**
