@@ -20,7 +20,7 @@ class Markdown extends Field implements FilterableField
      *
      * @var string
      */
-    public $component = 'markdown';
+    public $component = 'nova-markdown';
 
     /**
      * Indicates if the element should be shown on the index view.
