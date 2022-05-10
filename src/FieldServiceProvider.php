@@ -15,17 +15,7 @@ class FieldServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            // Publish config
-            $this->publishes([
-                __DIR__ . '/../config/' => config_path(),
-            ], 'config');
-        }
-
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/nova-markdown.php',
-            'nova-markdown'
-        );
+        $this->config();
 
         Nova::serving(function (ServingNova $event) {
             Nova::script('nova-markdown', __DIR__.'/../dist/js/field.js');
@@ -40,5 +30,20 @@ class FieldServiceProvider extends ServiceProvider
     public function register()
     {
         //
+    }
+
+    private function config()
+    {
+        if ($this->app->runningInConsole()) {
+            // Publish config
+            $this->publishes([
+                __DIR__ . '/../config/' => config_path(),
+            ], 'config');
+        }
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/nova-markdown.php',
+            'nova-markdown'
+        );
     }
 }
