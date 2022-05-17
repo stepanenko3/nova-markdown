@@ -281,7 +281,11 @@
             },
 
             previewContent() {
-                return md(this.currentField.preset).render(this.rawContent() || '')
+                return md(this.currentField.preset, {
+                    html: true,
+                    xhtmlOut: true,
+                    linkify: true,
+                }).render(this.rawContent() || '')
             },
 
         },
@@ -540,3 +544,10 @@
         },
     }
 </script>
+
+<style>
+    .markdown img,
+    .markdown svg {
+        display: inline-block !important;
+    }
+</style>

@@ -14,7 +14,11 @@
 
         computed: {
             excerpt() {
-                return md(this.field.preset).render(this.field.value || '')
+                return md(this.field.preset, {
+                    html: true,
+                    xhtmlOut: true,
+                    linkify: true,
+                }).render(this.field.value || '')
             },
         },
     }
