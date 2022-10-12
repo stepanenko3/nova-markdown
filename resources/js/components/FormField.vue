@@ -9,9 +9,9 @@
             <div
                 class="bg-white dark:bg-gray-900 rounded-lg overflow-hidden"
                 :class="{
-                'markdown-fullscreen fixed inset-0 z-50': isFullScreen,
-                'form-input form-input-bordered px-0': !isFullScreen,
-                'form-input-border-error': errors.has('body'),
+                    'markdown-fullscreen fixed inset-0 z-50': isFullScreen,
+                    'form-input form-input-bordered px-0': !isFullScreen,
+                    'form-input-border-error': errors.has('body'),
                 }"
             >
                 <header
