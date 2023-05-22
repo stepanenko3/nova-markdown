@@ -37,12 +37,23 @@ class Markdown extends Field implements FilterableField
     public $preset = 'default';
 
     /**
-     * Create a new element.
-     * @param  string|null  $component
+     * Create a new field.
+     *
+     * @param  string  $name
+     * @param  string|\Closure|callable|object|null  $attribute
+     * @param  (callable(mixed, mixed, ?string):(mixed))|null  $resolveCallback
+     * @return void
      */
-    public function __construct($component = null)
-    {
-        parent::__construct($component);
+    public function __construct(
+        string $name,
+        mixed $attribute = null,
+        callable $resolveCallback = null,
+    ) {
+        parent::__construct(
+            name: $name,
+            attribute: $attribute,
+            resolveCallback: $resolveCallback,
+        );
 
         $this->withMeta([
             'toolbar' => config('nova-markdown.toolbar'),
