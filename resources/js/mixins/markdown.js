@@ -1,8 +1,9 @@
 export default {
     data: () => ({
         insertTexts: {
+            quoteBlock: ["«", "»"],
             link: ["[", "](#url#)"],
-            image: ["![](", "#url#)"],
+            image: ["", "![#alt#](#url#)"],
             table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n"],
             horizontalRule: ["", "\n\n-----\n\n"],
         },
@@ -89,19 +90,22 @@ export default {
         /**
          * Action for drawing a link.
          */
-        drawLink(cm) {
+        drawLink(cm, url = 'http://') {
             var stat = this.getState(cm);
-            var url = "http://";
-            this._replaceSelection(cm, stat.link, this.insertTexts.link, url);
+            this._replaceSelection(cm, stat.link, this.insertTexts.link, {
+                '#url#': url
+            });
         },
 
         /**
          * Action for drawing an img.
          */
-        drawImage(cm) {
+        drawImage(cm, url = 'http://', alt = '') {
             var stat = this.getState(cm);
-            var url = "http://";
-            this._replaceSelection(cm, stat.image, this.insertTexts.image, url);
+            this._replaceSelection(cm, stat.image, this.insertTexts.image, {
+                '#url#': url,
+                '#alt#': alt,
+            });
         },
 
         /**
@@ -118,6 +122,11 @@ export default {
         drawHorizontalRule(cm) {
             var stat = this.getState(cm);
             this._replaceSelection(cm, stat.image, this.insertTexts.horizontalRule);
+        },
+
+        drawQuoteBlock(cm) {
+            var stat = this.getState(cm);
+            this._replaceSelection(cm, stat.image, this.insertTexts.quoteBlock);
         },
 
         /**
@@ -407,15 +416,18 @@ export default {
         },
 
 
-        _replaceSelection(cm, active, startEnd, url) {
+        _replaceSelection(cm, active, startEnd, replace = {}) {
             var text;
             var start = startEnd[0];
             var end = startEnd[1];
             var startPoint = cm.getCursor("start");
             var endPoint = cm.getCursor("end");
-            if (url) {
-                end = end.replace("#url#", url);
-            }
+
+            Object.keys(replace).map(key => {
+                start = start.replace(key, replace[key]);
+                end = end.replace(key, replace[key]);
+            });
+
             if (active) {
                 text = cm.getLine(startPoint.line);
                 start = text.slice(0, startPoint.ch);

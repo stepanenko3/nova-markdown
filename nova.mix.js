@@ -4,7 +4,7 @@ const path = require('path')
 
 class NovaExtension {
     name() {
-        return ''
+        return 'nova-extension'
     }
 
     register(name) {
@@ -28,6 +28,10 @@ class NovaExtension {
             'laravel-nova': path.join(
                 __dirname,
                 'vendor/laravel/nova/resources/js/mixins/packages.js'
+            ),
+            'nova-file-manager': path.join(
+                __dirname,
+                'vendor/stepanenko3/nova-filemanager/dist/js/package.js'
             ),
         }
 

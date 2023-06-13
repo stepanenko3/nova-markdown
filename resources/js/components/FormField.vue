@@ -118,6 +118,16 @@
                     </div>
                 </footer>
             </div>
+
+
+            <Teleport to="body">
+                <BrowserModal
+                    :multiple="true"
+                    :selecting="true"
+                    v-model:state="fileManagerState"
+                    @confirmSelection="confirmSelection"
+                />
+            </Teleport>
         </template>
     </DefaultField>
 </template>
@@ -139,6 +149,7 @@ import "codemirror/addon/selection/mark-selection.js";
 
 import { DependentFormField, HandlesValidationErrors } from "laravel-nova";
 import Markdown from "../mixins/markdown.js";
+import { BrowserModal } from "nova-file-manager";
 
 export default {
     mixins: [HandlesValidationErrors, DependentFormField, Markdown],
@@ -148,7 +159,12 @@ export default {
         isFocused: false,
         statusData: [],
         mode: "write",
+        fileManagerState: false,
     }),
+
+    components: {
+        BrowserModal,
+    },
 
     codemirror: null,
 
@@ -213,6 +229,10 @@ export default {
     },
 
     methods: {
+        confirmSelection(files) {
+            files.map(file => this.drawImage(this.codemirror, file.url, file.name))
+        },
+
         focus() {
             this.isFocused = true;
             this.codemirror.focus();
@@ -398,6 +418,24 @@ export default {
                 this.drawLink(this.codemirror);
             },
 
+            quoteBlock() {
+                if (!this.isEditable) return;
+
+                this.drawQuoteBlock(this.codemirror);
+            },
+
+            link() {
+                if (!this.isEditable) return;
+
+                this.drawLink(this.codemirror);
+            },
+
+            fileManager() {
+                if (!this.isEditable) return;
+
+                this.fileManagerState = true;
+            },
+
             image() {
                 if (!this.isEditable) return;
 
@@ -502,6 +540,11 @@ export default {
                     text: "ol",
                 },
                 {
+                    name: "quoteBlock",
+                    action: "quoteBlock",
+                    text: "«»",
+                },
+                {
                     name: "link",
                     action: "link",
                     icon: "link",
@@ -511,6 +554,12 @@ export default {
                     name: "image",
                     action: "image",
                     icon: "photograph",
+                    useHeroIcons: true,
+                },
+                {
+                    name: "fileManager",
+                    action: "fileManager",
+                    icon: "folder",
                     useHeroIcons: true,
                 },
                 {
