@@ -626,4 +626,8 @@ export default {
 .markdown svg {
     display: inline-block !important;
 }
+
+.markdown a {
+    text-decoration: underline;
+}
 </style>
