@@ -10,16 +10,12 @@
     "require": {
         "php": ">=8.0",
         "laravel/nova": "^4.0",
-        "stepanenko3/nova-filemanager": "*"
+        "stepanenko3/nova-filemanager": "^6.0"
     },
     "repositories": [
         {
             "type": "composer",
             "url": "https://laravel-nova.site"
-        },
-        {
-            "type": "path",
-            "url": "../nova-filemanager"
         }
     ],
     "autoload": {
