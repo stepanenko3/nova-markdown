@@ -95,6 +95,7 @@
                 >
                     <textarea
                         ref="theTextarea"
+                        spellcheck="true"
                         :class="{ 'bg-gray-100': currentlyIsReadonly }"
                     />
                 </div>
@@ -181,6 +182,8 @@ export default {
             indentWithTabs: true,
             lineWrapping: true,
             viewportMargin: Infinity,
+            inputStyle: 'contenteditable',
+            spellcheck: true,
             extraKeys: {
                 Enter: "newlineAndIndentContinueMarkdownList",
                 ...map(this.tools, (tool) => {
